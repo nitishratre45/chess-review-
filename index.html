@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Chess Review Pro</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- TOP NAV -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">♞</div>
+        <div>
+          <div class="brand-name">Chess Review</div>
+          <div class="brand-sub">ENGINE LAB</div>
+        </div>
+      </div>
+
+      <div class="engine-pill">
+        <span class="engine-dot"></span>
+        <span id="engineStatus">Loading Stockfish...</span>
+      </div>
+
+      <button class="new-game-btn" id="newGameButton">
+        <span>＋</span>
+        New Review
+      </button>
+    </header>
+
+
+    <!-- INPUT PAGE -->
+    <main id="inputSection" class="input-page">
+
+      <section class="hero">
+        <div class="hero-badge">
+          <span>⚡</span>
+          STOCKFISH 19 ANALYSIS
+        </div>
+
+        <h1>
+          Understand your game.<br>
+          <span>Improve your chess.</span>
+        </h1>
+
+        <p class="hero-text">
+          Paste your PGN and get a deep, move-by-move analysis with
+          accuracy, critical moments, mistakes, tactics and engine insights.
+        </p>
+
+        <div class="input-card">
+
+          <div class="input-card-head">
+            <div>
+              <h2>Analyze a game</h2>
+              <p>Paste your Chess.com PGN below</p>
+            </div>
+
+            <div class="depth-control">
+              <label for="depthSelect">Analysis</label>
+              <select id="depthSelect">
+                <option value="12">Fast</option>
+                <option value="16" selected>Balanced</option>
+                <option value="20">Deep</option>
+              </select>
+            </div>
+          </div>
+
+          <textarea
+            id="pgnInput"
+            spellcheck="false"
+            placeholder="[Event &quot;Casual Game&quot;]
+[White &quot;Player&quot;]
+[Black &quot;Opponent&quot;]
+[Result &quot;1-0&quot;]
+
+1. e4 e5 2. Nf3 Nc6 3. Bc4 ..."
+          ></textarea>
+
+          <div class="input-bottom">
+            <span class="input-tip">
+              💡 Tip: Copy the complete PGN including headers and moves.
+            </span>
+
+            <button id="analyzeButton" class="analyze-btn">
+              <span>Analyze Game</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="feature-strip">
+          <div>
+            <span>♟</span>
+            <strong>Move Analysis</strong>
+            <small>Every move evaluated</small>
+          </div>
+
+          <div>
+            <span>◈</span>
+            <strong>Accuracy</strong>
+            <small>Performance breakdown</small>
+          </div>
+
+          <div>
+            <span>⌁</span>
+            <strong>Critical Moments</strong>
+            <small>Find where it changed</small>
+          </div>
+
+          <div>
+            <span>♜</span>
+            <strong>Stockfish 19</strong>
+            <small>Local engine analysis</small>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+
+    <!-- LOADING -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+
+      <div class="loading-box">
+
+        <div class="loader-board">
+          <div>♜</div>
+          <div>♞</div>
+          <div>♟</div>
+          <div>♛</div>
+        </div>
+
+        <h2>Analyzing your game</h2>
+        <p id="loadingText">Preparing Stockfish...</p>
+
+        <div class="progress-track">
+          <div id="loadingProgress" class="progress-bar"></div>
+        </div>
+
+        <div class="loading-meta">
+          <span id="loadingMove">Preparing...</span>
+          <span id="loadingPercent">0%</span>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- REVIEW -->
+    <main id="reviewSection" class="review-page hidden">
+
+      <!-- GAME HEADER -->
+      <section class="game-header">
+
+        <div class="game-heading">
+          <div class="game-label">GAME REVIEW</div>
+
+          <h1>
+            <span id="whiteName">White</span>
+            <span class="vs">vs</span>
+            <span id="blackName">Black</span>
+          </h1>
+
+          <div class="game-meta">
+            <span id="gameResult">—</span>
+            <span>•</span>
+            <span id="moveCount">0 moves</span>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button id="startReviewButton" class="primary-small">
+            ▶ Start Review
+          </button>
+
+          <button id="newGameButton2" class="ghost-btn">
+            New Game
+          </button>
+        </div>
+
+      </section>
+
+
+      <!-- PLAYER PERFORMANCE -->
+      <section class="players-grid">
+
+        <article class="player-card white-card">
+
+          <div class="player-top">
+            <div class="player-side">
+              <div class="piece-avatar white-piece">♔</div>
+
+              <div>
+                <div class="side-label">WHITE</div>
+                <h2 id="whitePlayerName">White</h2>
+              </div>
+            </div>
+
+            <div class="accuracy-block">
+              <small>ACCURACY</small>
+              <strong id="whiteAccuracy">—</strong>
+            </div>
+          </div>
+
+          <div class="accuracy-track">
+            <div id="whiteAccuracyBar"></div>
+          </div>
+
+          <div class="performance-line">
+            <span>Performance</span>
+            <strong id="whiteRating">—</strong>
+          </div>
+
+        </article>
+
+
+        <article class="player-card black-card">
+
+          <div class="player-top">
+            <div class="player-side">
+              <div class="piece-avatar black-piece">♚</div>
+
+              <div>
+                <div class="side-label">BLACK</div>
+                <h2 id="blackPlayerName">Black</h2>
+              </div>
+            </div>
+
+            <div class="accuracy-block">
+              <small>ACCURACY</small>
+              <strong id="blackAccuracy">—</strong>
+            </div>
+          </div>
+
+          <div class="accuracy-track">
+            <div id="blackAccuracyBar"></div>
+          </div>
+
+          <div class="performance-line">
+            <span>Performance</span>
+            <strong id="blackRating">—</strong>
+          </div>
+
+        </article>
+
+      </section>
+
+
+      <!-- MOVE CLASSIFICATIONS -->
+      <section class="classification-section">
+
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">MOVE QUALITY</div>
+            <h2>How you played</h2>
+          </div>
+
+          <div class="classification-note">
+            Based on engine evaluation
+          </div>
+        </div>
+
+        <div id="categoryRows" class="category-grid"></div>
+
+      </section>
+
+
+      <!-- ANALYSIS WORKSPACE -->
+      <section class="analysis-layout">
+
+        <!-- BOARD COLUMN -->
+        <div class="board-column">
+
+          <div class="board-top">
+
+            <div>
+              <div class="eyebrow">POSITION</div>
+              <strong id="positionLabel">Starting Position</strong>
+            </div>
+
+            <div id="evaluation" class="eval-pill">
+              0.00
+            </div>
+
+          </div>
+
+
+          <div class="board-wrapper">
+
+            <div id="evaluationSide" class="eval-side">
+              <div id="evalFill"></div>
+              <span id="evalText">0.00</span>
+            </div>
+
+            <div id="chessBoard" class="chess-board"></div>
+
+          </div>
+
+
+          <!-- NAVIGATION -->
+          <div class="board-controls">
+
+            <button id="firstMove" title="First move">⏮</button>
+            <button id="prevMove" title="Previous move">‹</button>
+
+            <div class="move-position">
+              <strong id="moveCounter">0 / 0</strong>
+              <span>moves</span>
+            </div>
+
+            <button id="nextMove" title="Next move">›</button>
+            <button id="lastMove" title="Last move">⏭</button>
+
+          </div>
+
+
+          <!-- MOVE INFO -->
+          <div class="move-insight">
+
+            <div class="insight-head">
+              <div>
+                <span class="eyebrow">CURRENT MOVE</span>
+                <h3 id="currentMoveTitle">No move selected</h3>
+              </div>
+
+              <span id="currentMoveBadge" class="move-badge good">
+                —
+              </span>
+            </div>
+
+            <div class="move-comparison">
+
+              <div class="comparison-item">
+                <span>YOU PLAYED</span>
+                <strong id="playedMove">—</strong>
+              </div>
+
+              <div class="comparison-arrow">→</div>
+
+              <div class="comparison-item best">
+                <span>BEST MOVE</span>
+                <strong id="bestMove">—</strong>
+              </div>
+
+              <div class="comparison-item">
+                <span>CPL</span>
+                <strong id="moveCpl">—</strong>
+              </div>
+
+            </div>
+
+            <div id="moveExplanation" class="move-explanation">
+              Select a move to see the engine explanation.
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- RIGHT COLUMN -->
+        <aside class="analysis-sidebar">
+
+          <div class="sidebar-card">
+
+            <div class="tabs">
+
+              <button class="tab active" data-tab="critical">
+                Critical
+                <span id="criticalCount">0</span>
+              </button>
+
+              <button class="tab" data-tab="all">
+                All Moves
+                <span id="allCount">0</span>
+              </button>
+
+            </div>
+
+
+            <div id="criticalMoves" class="move-list"></div>
+
+            <div id="allMoves" class="move-list hidden"></div>
+
+          </div>
+
+
+          <!-- GRAPH -->
+          <div class="graph-card">
+
+            <div class="graph-head">
+              <div>
+                <div class="eyebrow">GAME FLOW</div>
+                <h3>Evaluation</h3>
+              </div>
+
+              <span>White advantage ↑</span>
+            </div>
+
+            <canvas id="evaluationGraph"></canvas>
+
+          </div>
+
+        </aside>
+
+      </section>
+
+
+      <!-- DEEP INSIGHTS -->
+      <section class="insights-section">
+
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">DEEP ANALYSIS</div>
+            <h2>Game Insights</h2>
+          </div>
+        </div>
+
+
+        <div class="insights-grid">
+
+          <article class="insight-card">
+
+            <div class="insight-icon">⚔</div>
+
+            <div>
+              <span>TACTICS</span>
+              <h3 id="tacticalScore">Analyzing...</h3>
+              <p id="tacticalText">
+                Tactical performance will appear here.
+              </p>
+            </div>
+
+          </article>
+
+
+          <article class="insight-card">
+
+            <div class="insight-icon">♔</div>
+
+            <div>
+              <span>KING SAFETY</span>
+              <h3 id="kingSafetyScore">Analyzing...</h3>
+              <p id="kingSafetyText">
+                King safety insights will appear here.
+              </p>
+            </div>
+
+          </article>
+
+
+          <article class="insight-card">
+
+            <div class="insight-icon">♜</div>
+
+            <div>
+              <span>STRATEGY</span>
+              <h3 id="strategyScore">Analyzing...</h3>
+              <p id="strategyText">
+                Strategic insights will appear here.
+              </p>
+            </div>
+
+          </article>
+
+
+          <article class="insight-card">
+
+            <div class="insight-icon">♟</div>
+
+            <div>
+              <span>ENDGAME</span>
+              <h3 id="endgameScore">Analyzing...</h3>
+              <p id="endgameText">
+                Endgame insights will appear here.
+              </p>
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- SUMMARY -->
+      <section class="summary-card">
+
+        <div class="summary-main">
+
+          <div class="summary-icon">✦</div>
+
+          <div>
+            <div class="eyebrow">COACH SUMMARY</div>
+            <h2>Your Game Story</h2>
+
+            <p id="gameSummary">
+              Your personalized game summary will appear here.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="summary-stats">
+
+          <div>
+            <span>Critical Moments</span>
+            <strong id="summaryCritical">0</strong>
+          </div>
+
+          <div>
+            <span>Average CPL</span>
+            <strong id="summaryCpl">0</strong>
+          </div>
+
+          <div>
+            <span>Best Phase</span>
+            <strong id="summaryBestPhase">—</strong>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <script type="module" src="script.js"></script>
+
+</body>
+</html>
